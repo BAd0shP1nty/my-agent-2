@@ -1,49 +1,90 @@
-# Agent Template Pack: Weekly Status Report Agent
+# 📡 Telecom ITSM RAG Operations Assistant
 
-The starter for **Zero to Live AI Agent on Cloud** (Future Proof India).
+A production-ready **Retrieval-Augmented Generation (RAG)** chatbot specifically designed for the **Telecommunications** domain and **IT Service Management (ITSM)** sub-domain.
 
-A delivery manager pastes a week of rough team notes (stand-ups, Jira lines, emails). The agent sorts every note, gives an overall Red / Amber / Green status, builds a risk and blocker register with owners and dates, checks its own work against three checks, fixes it, and lists the questions to ask the team. You will change it into your own agent on Day 2 and put it online on Day 3. It runs straight away in **demo mode**, with no AI key.
+Built with:
+- **Vector Database**: [FAISS](https://github.com/facebookresearch/faiss) (`faiss-cpu`) with cosine similarity indexing
+- **Embedding Model**: OpenAI `text-embedding-3-small` (1536 dimensions)
+- **Large Language Model (LLM)**: DeepSeek (`deepseek-chat`)
+- **Web Interface**: Streamlit with interactive grounding validation and document inspection
+- **Dataset**: Comprehensive 3-page synthetic Telecom Core (Mediation, OCS, SS7, Diameter Gy, Kafka) incident and runbook knowledge base
 
-## Day 2: run it on your computer
+---
 
-1. **Copy this project.** Click the green **Use this template** button at the top right of this page, then **Create a new repository**. Name it `my-agent`, keep it **Public**, and click **Create repository**.
-2. **Download it.** On your new repository, click the green **Code** button, then **Download ZIP**. Unzip it into a folder on your computer.
-3. **Open the folder in the Antigravity app** (the desktop app, not the Antigravity IDE) and paste the prompt from the Studio step. It installs what the project needs and starts it. If you prefer to type the commands yourself, run these in a terminal inside the folder:
+## 🏗️ Architecture & Domain Coverage
 
-   ```
+1. **Page 1: Architecture & ITSM Framework**:
+   - Subsystem topologies: Passive Mediation, Online Charging System (OCS), SS7 / SCCP, Policy Control (PCRF), SMSC / SMPP, Packet Core.
+   - ITSM Incident Priority Matrix (P1, P2, P3) and SLA targets (<2h for P1, <4h for P2, <24h for P3).
+   - Triage, blast radius scoping, and Post-Incident Review (PIR) governance.
+
+2. **Page 2: Standard Incident Records & Post-Mortems**:
+   - `TEL-INC-2026-0001`: Mediation SFTP collector delay due to expired partner credentials.
+   - `TEL-INC-2026-0002`: P1 destination-code rating table mapping error and rollback.
+   - `TEL-INC-2026-0003`: P1 Diameter Gy credit-control timeout from firewall ephemeral port exhaustion.
+   - `TEL-INC-2026-0004`: P2 prepaid balance cache invalidation drop after async recharge.
+   - `TEL-INC-2026-0005`: P1 SS7 SCCP translation failures caused by obsolete Global Title Translation (GTT).
+   - `TEL-INC-2026-0012`: P1 Kafka consumer lag caused by poison-pill deserialization failure.
+   - `TEL-INC-2026-0030`: P1 promotional bundle tariff priority precedence inversion.
+
+3. **Page 3: Operational Runbooks & Preventive SOPs**:
+   - `RB-ITSM-01`: Service Account Credential Rotation & 48h Overlap Windows.
+   - `RB-ITSM-02`: Diameter & Signaling Firewall Change Validation & Concurrency Benchmarks.
+   - `RB-ITSM-03`: Kafka Consumer Lag & Poison-Pill Dead-Letter Queue (DLQ) Remediation.
+   - `RB-ITSM-04`: Tariff Rule Release & Rating Precedence Hierarchy (Priority 10 to 99).
+   - `RB-ITSM-05`: Problem Management & Known Error Database (KEDB) Linkage.
+
+---
+
+## 🚀 Running Locally
+
+1. **Install dependencies**:
+   ```bash
    python -m pip install -r requirements.txt
+   ```
+
+2. **Configure secrets**:
+   Create or edit `.streamlit/secrets.toml`:
+   ```toml
+   DEEPSEEK_API_KEY = "your-deepseek-api-key"
+   OPENAI_API_KEY = "your-openai-api-key"
+   AI_BASE_URL = "https://api.deepseek.com"
+   AI_MODEL = "deepseek-chat"
+   ```
+
+3. **Start the Streamlit App**:
+   ```bash
    python -m streamlit run app.py
    ```
+   Open your browser at `http://localhost:8501`.
 
-4. **Open the address it prints** (it starts with `localhost`). Press **Load a sample week**, then **Write my report**.
+---
 
-### Use a real AI model
+## ☁️ Deploying to Streamlit Community Cloud
 
-1. Get a key from an AI provider (Google Gemini has a free tier).
-2. Copy `.streamlit/secrets.toml.example` to a new file `.streamlit/secrets.toml`. Paste your key and your provider's two lines into it.
-3. Restart the project. The green box now says it is using a real model.
+1. **Push your code to GitHub**:
+   ```bash
+   git add .
+   git commit -m "feat: complete Telecom ITSM RAG chatbot with FAISS, OpenAI, and DeepSeek"
+   git push origin main
+   ```
 
-`.streamlit/secrets.toml` stays on your computer. It is ignored by Git, and you must never upload it to GitHub.
+2. **Connect to Streamlit Cloud**:
+   - Go to [share.streamlit.io](https://share.streamlit.io) and log in with your GitHub account.
+   - Click **Create app** -> **Deploy a public app from GitHub**.
+   - Select your repository (`my-agent-2` or your chosen repo name), branch `main`, and main file `app.py`.
 
-### Make it yours
+3. **Add Secrets in Streamlit Cloud**:
+   - Expand **Advanced Settings** before clicking Deploy (or in your app's Settings -> Secrets).
+   - Paste the following:
+     ```toml
+     DEEPSEEK_API_KEY = "sk-your-deepseek-key"
+     OPENAI_API_KEY = "sk-your-openai-key"
+     AI_BASE_URL = "https://api.deepseek.com"
+     AI_MODEL = "deepseek-chat"
+     ```
+   - Click **Save** and **Deploy**.
 
-| File | What it is | What you do |
-|---|---|---|
-| `prompts.py` | the agent's job description | rewrite it in your own words |
-| `app.py` | the screen people see | improve it |
-| `sample_updates.txt` | a sample week of notes | replace with your own samples |
-| `agent.py` | the agent's steps: sort, check, fix, ask | change only if you want new steps |
-| `demo.py` | simple rules used in demo mode | you can ignore this |
-
-## Day 3: put it online
-
-1. **Upload to GitHub, in your browser.** Open your repository, click **Add file**, then **Upload files**, drag in your project files and click **Commit changes**. Do **not** upload `.streamlit/secrets.toml`.
-2. **Deploy.** Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub. Click **Create app**, choose **Deploy a public app from GitHub**, pick your repository and leave the main file as `app.py`.
-3. **Add your key safely.** Open **Advanced settings**, and in **Secrets** paste the same three lines you put in `.streamlit/secrets.toml`. Click **Deploy**.
-4. **Open your link.** It ends in `streamlit.app`.
-
-To change something later, open the file on GitHub, click the pencil, edit and press **Commit changes**. Your live app updates by itself.
-
-## If something fails
-
-Open your app and click **Manage app** at the bottom right, then read the last lines of the log. Paste them into your AI assistant and ask: "What is wrong, in plain words, and what exact change should I make?"
+4. **Verify Deployment**:
+   - Streamlit Cloud will automatically install packages from `requirements.txt` (`faiss-cpu`, `openai`, `numpy`, `pandas`, `streamlit`).
+   - Your live app URL will end in `.streamlit.app`.
